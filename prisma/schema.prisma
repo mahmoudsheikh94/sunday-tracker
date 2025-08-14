@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Playlist {
+  id         String          @id @default(cuid())
+  spotifyId  String          @unique
+  name       String
+  ownerName  String?
+  imageUrl   String?
+  snapshotId String?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  tracks     PlaylistTrack[]
+  links      TrackingLink[]
+}
+
+model PlaylistTrack {
+  id          String    @id @default(cuid())
+  playlistId  String
+  spotifyId   String
+  addedAt     DateTime?
+  durationMs  Int?
+  artistIds   String[]
+  trackName   String?
+  artistNames String?
+  playlist    Playlist  @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, spotifyId])
+}
+
+model TrackingLink {
+  id              String             @id @default(cuid())
+  slug            String             @unique
+  playlistId      String
+  title           String?
+  createdAt       DateTime           @default(now())
+  isActive        Boolean            @default(true)
+  clicks          Click[]
+  dailyAggregates LinkDayAggregate[]
+  playlist        Playlist           @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  connections     UserConnection[]
+}
+
+model Click {
+  id        String       @id @default(cuid())
+  linkId    String
+  clickId   String       @unique
+  userAgent String?
+  ipHash    String?
+  utms      Json?
+  createdAt DateTime     @default(now())
+  link      TrackingLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+}
+
+model SpotifyUser {
+  id            String           @id @default(cuid())
+  spotifyUserId String           @unique
+  email         String?
+  country       String?
+  displayName   String?
+  createdAt     DateTime         @default(now())
+  tokens        OAuthToken[]
+  connections   UserConnection[]
+}
+
+model OAuthToken {
+  id            String      @id @default(cuid())
+  spotifyUserId String
+  accessToken   String
+  refreshToken  String
+  expiresAt     DateTime
+  scope         String
+  createdAt     DateTime    @default(now())
+  user          SpotifyUser @relation(fields: [spotifyUserId], references: [spotifyUserId], onDelete: Cascade)
+}
+
+model UserConnection {
+  id              String             @id @default(cuid())
+  linkId          String
+  spotifyUserId   String
+  clickId         String
+  connectedAt     DateTime           @default(now())
+  endAt           DateTime?
+  lastPolledAt    DateTime?
+  isActive        Boolean            @default(true)
+  sessions        ListeningSession[]
+  plays           Play[]
+  link            TrackingLink       @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  user            SpotifyUser        @relation(fields: [spotifyUserId], references: [spotifyUserId], onDelete: Cascade)
+  dailyAggregates UserDayAggregate[]
+
+  @@unique([linkId, spotifyUserId])
+}
+
+model ListeningSession {
+  id               String         @id @default(cuid())
+  connectionId     String
+  startedAt        DateTime
+  endedAt          DateTime
+  trackCount       Int
+  totalMinutes     Int
+  superListenerHit Boolean        @default(false)
+  connection       UserConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+}
+
+model Play {
+  id              String         @id @default(cuid())
+  connectionId    String
+  playedAt        DateTime
+  spotifyTrackId  String
+  durationMs      Int?
+  matchedPlaylist Boolean
+  connection      UserConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@index([connectionId, playedAt])
+}
+
+model UserDayAggregate {
+  id               String         @id @default(cuid())
+  connectionId     String
+  day              DateTime
+  tracksPlayed     Int
+  uniqueSessions   Int
+  minutesListened  Int
+  savedAny         Boolean?
+  followsPlaylist  Boolean?
+  country          String?
+  superListenerDay Boolean        @default(false)
+  connection       UserConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@unique([connectionId, day])
+}
+
+model LinkDayAggregate {
+  id              String       @id @default(cuid())
+  linkId          String
+  day             DateTime
+  connectionsNew  Int
+  activeListeners Int
+  tracksPlayed    Int
+  minutesListened Int
+  superListeners  Int
+  link            TrackingLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@unique([linkId, day])
+}
