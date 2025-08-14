@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma'
 import { getLinkMetrics } from '@/lib/metrics'
 import { formatCopenhagen } from '@/lib/time'
 
+// Force dynamic rendering to prevent build-time database access
+export const dynamic = 'force-dynamic'
+
 async function getLinksData() {
   const links = await prisma.trackingLink.findMany({
     where: { isActive: true },
@@ -19,7 +22,7 @@ async function getLinksData() {
   })
 
   const linksWithMetrics = await Promise.all(
-    links.map(async (link) => {
+    links.map(async (link: any) => {
       const metrics = await getLinkMetrics(link.id)
       return {
         ...link,
@@ -70,7 +73,7 @@ export default async function LinksPage() {
             <h2 className="text-lg font-medium text-gray-900">Active Links</h2>
           </div>
           <div className="divide-y divide-gray-200">
-            {links.map((link) => (
+            {links.map((link: any) => (
               <div key={link.id} className="px-6 py-4 hover:bg-gray-50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
