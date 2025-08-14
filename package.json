@@ -2,12 +2,17 @@
   "name": "sndy-tracker",
   "version": "0.1.0",
   "private": true,
+  {
+  "name": "sndy-tracker",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "test-cron": "curl -X POST http://localhost:3000/api/jobs/poll-recently-played -H 'X-CRON-KEY: your-cron-key-here'"
+    "postinstall": "prisma generate",
+    "test-cron": "curl -X POST http://localhost:3000/api/jobs/refresh-playlists -H 'X-CRON-KEY: your-cron-key-here'"
   },
   "dependencies": {
     "@prisma/client": "^6.14.0",
