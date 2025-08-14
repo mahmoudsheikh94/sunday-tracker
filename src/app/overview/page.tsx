@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma'
 import { getLinkMetrics } from '@/lib/metrics'
 import { formatCopenhagen } from '@/lib/time'
 
+// Force dynamic rendering to prevent build-time database access
+export const dynamic = 'force-dynamic'
+
 async function getOverviewData() {
   const links = await prisma.trackingLink.findMany({
     where: { isActive: true },
