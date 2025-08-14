@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma'
 import { getLinkMetrics, LinkMetrics } from '@/lib/metrics'
 import { formatCopenhagen } from '@/lib/time'
 
+// Force dynamic rendering to prevent build-time database access
+export const dynamic = 'force-dynamic'
+
 interface LinkWithMetrics {
   id: string
   title?: string | null
