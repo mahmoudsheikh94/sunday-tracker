@@ -1,9 +1,9 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "pnpm build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "installCommand": "npm install",
-  "devCommand": "npm run dev",
+  "installCommand": "pnpm install",
+  "devCommand": "pnpm dev",
   "functions": {
     "src/app/api/**/*.ts": {
       "maxDuration": 30
@@ -12,7 +12,7 @@
   "crons": [
     {
       "path": "/api/jobs/poll-recently-played",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 3 * * *"
     },
     {
       "path": "/api/jobs/retention-sweep",

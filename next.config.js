@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   serverExternalPackages: ['@prisma/client'],
-  env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client']
   },
   async headers() {
     return [

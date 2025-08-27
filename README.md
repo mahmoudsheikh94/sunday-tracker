@@ -223,3 +223,122 @@ MIT License - see LICENSE file for details
 ## Support
 
 For questions or issues, please open a GitHub issue or contact the development team.
+
+##  Current Status
+- ✅ **Spotify Client ID**: `fe8cf4efd581453e8320957fc863c183`
+- ✅ **Spotify Client Secret**: `97b247af5dac4870af2e2d3d8b407147`
+-  **Vercel URL**: We'll get this after deployment
+
+##  Deployment Steps
+
+### Step 1: Create Missing Files
+
+First, let me create the `.gitignore` file you need:
+
+```gitignore
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env*.local
+.env
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Prisma
+prisma/migrations/
+```
+
+### Step 2: GitHub Setup
+
+```bash
+# In your project directory
+git init
+git add .
+git commit -m "Initial commit: Sndy Tracker app ready for deployment"
+
+# Create new repository on GitHub.com, then:
+git remote add origin https://github.com/yourusername/spotifytracker-new.git
+git branch -M main
+git push -u origin main
+```
+
+### Step 3: Supabase Setup
+
+1. **Go to [Supabase.com](https://supabase.com)**
+2. **Create new project**
+3. **Go to SQL Editor**
+4. **Run the SQL schema we created earlier**
+5. **Copy connection string** from Project Settings → Database
+
+### Step 4: Vercel Deployment
+
+1. **Go to [Vercel.com](https://vercel.com)**
+2. **Click "New Project"**
+3. **Import your GitHub repository**
+4. **Configure project**:
+   - Framework: Next.js
+   - Root Directory: `./`
+   - Build Command: `pnpm build`
+   - Install Command: `pnpm install`
+
+5. **Add Environment Variables** (we'll use placeholder URLs for now):
+   ```env
+   DATABASE_URL=your_supabase_connection_string
+   SPOTIFY_CLIENT_ID=fe8cf4efd581453e8320957fc863c183
+   SPOTIFY_CLIENT_SECRET=97b247af5dac4870af2e2d3d8b407147
+   SPOTIFY_REDIRECT_URI=https://PLACEHOLDER.vercel.app/api/oauth/callback
+   APP_BASE_URL=https://PLACEHOLDER.vercel.app
+   CRON_KEY=generate_random_64_character_string
+   ```
+
+6. **Deploy!**
+
+### Step 5: Update Spotify & Environment Variables
+
+After Vercel gives you the URL (e.g., `https://spotifytracker-new.vercel.app`):
+
+1. **Update Spotify redirect URI** to: `https://your-actual-url.vercel.app/api/oauth/callback`
+2. **Update Vercel environment variables** with the real URLs
+3. **Redeploy** to apply the new environment variables
+
+## 🔑 Generate CRON Key
+
+For the `CRON_KEY`, generate a random 64-character string. You can use this command:
+
+```bash
+# On macOS/Linux
+openssl rand -base64 48 | tr -d "=+/" | cut -c1-64
+
+# Or use an online generator and make it 64 characters
+```
+
+## ⚡ Ready to Start?
+
+Let's begin with the GitHub setup. Do you have a GitHub repository created, or should I walk you through creating one first?
