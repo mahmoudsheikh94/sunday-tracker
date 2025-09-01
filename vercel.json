@@ -8,19 +8,5 @@
     "src/app/api/**/*.ts": {
       "maxDuration": 30
     }
-  },
-  "crons": [
-    {
-      "path": "/api/jobs/poll-recently-played",
-      "schedule": "0 3 * * *"
-    },
-    {
-      "path": "/api/jobs/retention-sweep",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/jobs/refresh-playlists",
-      "schedule": "0 4 * * *"
-    }
-  ]
+  }
 }
