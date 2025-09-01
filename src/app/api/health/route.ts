@@ -1,8 +1,28 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+interface HealthStatus {
+  status: 'ok' | 'error'
+  timestamp: string
+  environment: string
+  checks: {
+    database: string
+    environment: string
+  }
+  environment_variables: {
+    DATABASE_URL: string
+    SPOTIFY_CLIENT_ID: string
+    SPOTIFY_CLIENT_SECRET: string
+    SPOTIFY_REDIRECT_URI: string
+    APP_BASE_URL: string
+    CRON_KEY: string
+  }
+  error?: string
+  missing_variables?: string[]
+}
+
 export async function GET() {
-  const health = {
+  const health: HealthStatus = {
     status: 'ok',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'unknown',
