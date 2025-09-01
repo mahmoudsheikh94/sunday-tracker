@@ -25,12 +25,16 @@ export async function GET() {
   } catch (error) {
     console.error('Database test failed:', error)
     
+    // Handle the error properly with type checking
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorStack = error instanceof Error ? error.stack : undefined
+    
     return NextResponse.json({
       status: 'error',
       message: 'Database connection failed',
       timestamp: new Date().toISOString(),
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      error: errorMessage,
+      stack: process.env.NODE_ENV === 'development' ? errorStack : undefined,
       environment_vars: {
         DATABASE_URL: process.env.DATABASE_URL ? 'set' : 'missing',
         NODE_ENV: process.env.NODE_ENV || 'unknown'
